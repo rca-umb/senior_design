@@ -1,6 +1,6 @@
 # senior_design
 
-This repository aims to document and hold the code required for Team 1 of UMass Boston's 23'-24' Senior Design class. The foundation for much of the code can be found [here;](https://github.com/AbhiSharma04/Drone-Mesh-Communication-Network) a repository which was put together by three graduate students of computer science who worked together with our team for the fall semester. Their work provided a lot of help, but as our project developed, it became time to make some changes and specialize things for our own uses.
+This repository aims to document and hold the code required for Team 1 of UMass Boston's 23'-24' Senior Design class. The foundation for much of the code can be found [here:](https://github.com/AbhiSharma04/Drone-Mesh-Communication-Network) a repository which was put together by three graduate students of computer science who worked together with our team for the fall semester. Their work provided a lot of help, but as our project developed, it became time to make some changes and specialize things for our own uses.
 
 ### To Do:
 
