@@ -1,5 +1,5 @@
 /* Team 1 Senior Design '23-'24
-  Robert, Yousef, Brandon
+  Robert, Yousuf, Brandon
   This code is intended to test the wind, temperature, and humidity sensors that last year's team
   used for their project. Based on the sample code provided by the sensor manufacturer.
   https://github.com/moderndevice/Wind_Sensor/blob/master/WindSensor/WindSensor.ino
