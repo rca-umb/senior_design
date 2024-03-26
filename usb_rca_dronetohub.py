@@ -1,6 +1,6 @@
 # Team 1 UMB Senior Design '23-'24
 # Updated code to take data from Arduino and send to a different XBee device.
-# Code changes by Rob Arsenault
+# This version uses USB connection while we are waiting for PCB to come.
 
 import serial
 import time
