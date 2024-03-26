@@ -1,6 +1,6 @@
 # Team 1 UMB Senior Design '23-'24
 # Updated code to take data from Arduino and send to a different XBee device.
-# This version uses USB connection while we are waiting for PCB to come.
+# AFTER SYSTEM BOOT, UNPLUG ARDUINO AND XBEE. PLUG IN XBEE FIRST, THEN ARDUINO
 
 import serial
 import time
@@ -12,12 +12,16 @@ from digi.xbee.devices import XBeeDevice, RemoteXBeeDevice, XBee64BitAddress
 # Connect to Arduino through Serial communication
 arduino_serial = serial.Serial(port="/dev/ttyUSB1", baudrate=57600, timeout=1)
 
-# Data to be sent to other XBees
-data_packet = {"Device": "Drone 1", "Time": None, "Temperature": None, "Humidity": None, "Wind Speed": None}
-
-# Instantiate a local XBee node (this is the XBee device connected to this Pi
+# Instantiate a local XBee node (this is the XBee device connected to this Pi)
 xbee = XBeeDevice("/dev/ttyUSB0", 115200)
 xbee.open()
+this_xbee = xbee.get_64bit_addr().address.hex() # 64bit address object -> bytearray -> string representation of hex value
+
+# Keep record of each XBee's address
+registry = {"0013a200420107ce": "Drone 1", "0013a200420107ef": "Drone 2", "0013a20042010691": "Hub"}
+
+# Data to be sent to other XBees
+data_packet = {"Time": None, "Temperature": None, "Humidity": None, "Wind Speed": None, "GPS": None}
 
 # Function to read Arduino serial output one line at a time
 def read_arduino():
@@ -48,7 +52,8 @@ def send_packet():
 			print(item) # Print to pi terminal for testing
 		except:
 			print("Transmit Error")
-        
+
+print(registry[this_xbee] + ': Now Running') # Shows in terminal which device is running					  
 try:
 	while True:
 		data = read_arduino()
