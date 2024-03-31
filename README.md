@@ -26,6 +26,8 @@ How do we even want this network to function? Possibility: Change script on dron
 	2) change strings to byte arrays
 9) ~~Change script on hub to pass data into model. Get rid of GUI and webserver. Get rid of need for CSV files.~~
 10) Move fire prediction onto drones. Yes/No will be only thing sent back to hub. Hub will be responsible for maintaining mesh network
+	1) Drones send output
+	2) Hub receives output
 11) Hub code can correctly connect to XBees when in range
 12) Hub code can correctly connect to XBees when out of range
 13) Check in with Professor Materdey on how mesh network is even supposed to behave and adjust this plan accordingly
