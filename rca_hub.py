@@ -84,6 +84,9 @@ def read_data(message):
 print(registry[this_xbee] + ': Now Running')
 t = 5 # wait this many seconds to receive data
 init_swarm(t)
+try:
+	xbee.read_data(t)
+	
 
 
 	
