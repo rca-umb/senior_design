@@ -71,7 +71,7 @@ def make_prediction(data):
 def send_packet():
 	try:
 		xbee.send_data_broadcast(data_packet) # transmit just the gps coords
-		print(data_packet) # Print to pi terminal for testing
+		print("Target:" + data_packet["Target"] + ",GPS:" + data_packet["GPS"] +",Fire:" + data_packet["Prediction"]) # Print to pi terminal for testing
 	except:
 		print("Transmit Error")
 

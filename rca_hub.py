@@ -54,7 +54,7 @@ def init_swarm(time):
 	d2 = None
 	while config:
 		try: 
-			xbee.read_data(time)
+			xbee_message = xbee.read_data(time)
 			drone = xbee_message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
 			if registry[drone] == registry[0]:
 				d1 = DroneLocation(drone)
@@ -77,16 +77,19 @@ def init_swarm(time):
 
 # Function to properly process data from drones
 def read_data(message):
-	that_xbee = xbee_message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
+	that_xbee = message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
 	device = registry[that_xbee] # check which drone sent the data
-	print('From ' + device + ': ' + xbee_message.data.decode()) 
+	print('From ' + device + ': ' + message.data.decode()) 
 
 print(registry[this_xbee] + ': Now Running')
 t = 5 # wait this many seconds to receive data
 init_swarm(t)
-try:
-	xbee.read_data(t)
-	
+while True:
+	try:
+		xbee_message = xbee.read_data(t)
+	except:
+		print("Received no data after " + str(t) +" seconds.")
+	read_data(xbee_message)
 
 
 	
