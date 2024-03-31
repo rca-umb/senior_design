@@ -3,9 +3,9 @@
 # AFTER SYSTEM BOOT, UNPLUG ARDUINO AND XBEE. PLUG IN XBEE FIRST, THEN ARDUINO
 
 import serial
-import time
-import datetime
 import re
+import numpy as np
+import tensorflow as tf
 from digi.xbee.devices import XBeeDevice, RemoteXBeeDevice, XBee64BitAddress
 
 
@@ -21,7 +21,17 @@ this_xbee = xbee.get_64bit_addr().address.hex() # 64bit address object -> bytear
 registry = {"0013a200420107ce": "Drone 1", "0013a200420107ef": "Drone 2", "0013a20042010691": "Hub"}
 
 # Data to be sent to other XBees
-data_packet = {"Time": None, "Temperature": None, "Humidity": None, "Wind Speed": None, "GPS": None}
+data_packet = {"Target": "Hub", "GPS": [0.0,0.0], "Prediction": None}
+drone_data = np.array([1,3],np.float32)
+
+# Load TensorFlow Lite model
+interpreter = tf.lite.Interpreter(model_path="/home/hub/Desktop/converted_model.tflite")
+interpreter.allocate_tensors()
+
+# Get input and output details
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+
 
 # Function to read Arduino serial output one line at a time
 def read_arduino():
@@ -30,35 +40,49 @@ def read_arduino():
 		if "Temperature" in line:
 			temp_match = re.search(r"Temperature \(F\): ([\d.]+)", line)
 			if temp_match:
-				data_packet["Temperature"] = float(temp_match.group(1))
+				drone_data[0] = float(temp_match.group(1))
 		elif "Humidity" in line:
 			humi_match = re.search(r"Humidity \(% RH\): ([\d.]+)", line)
 			if humi_match:
-				data_packet["Humidity"] = float(humi_match.group(1))
+				drone_data[1] = float(humi_match.group(1))
 		elif "Wind Speed" in line:
 			wind_match = re.search(r"Wind Speed \(mph\): ([\d.]+)", line)
 			if wind_match:
-				data_packet["Wind Speed"] = float(wind_match.group(1))
+				drone_data[2] = float(wind_match.group(1))
 		return line
 	return None
 
+# Function to make prediction based on model
+def make_prediction(data):
+	# Reshape data
+	data = np.reshape(data, (1, -1))
+	
+	# Set input tensor
+	interpreter.set_tensor(input_details[0]['index'], data)
+
+	# Run inference
+	interpreter.invoke()
+
+	# Get the output tensor if needed
+	prediction = interpreter.get_tensor(output_details[0]['index'])
+	return prediction
+
 # Function to send data to other XBees in the network
 def send_packet():
-	string_packet = ''
-	data_packet["Time"] = datetime.datetime.now().isoformat(timespec='milliseconds') # Update data packet with current time in ISO format
-	for item in data_packet.items(): # XBee cannot send dictionary, so convert it to a string
-		try:
-			xbee.send_data_broadcast(str(item))
-			print(item) # Print to pi terminal for testing
-		except:
-			print("Transmit Error")
+	try:
+		xbee.send_data_broadcast(data_packet) # transmit just the gps coords
+		print(data_packet) # Print to pi terminal for testing
+	except:
+		print("Transmit Error")
 
 print(registry[this_xbee] + ': Now Running') # Shows in terminal which device is running					  
 try:
 	while True:
 		data = read_arduino()
 		if data: # Only send packet when data from the Arduino has been read (ensures no repeats)
-			send_packet()
+			fire = make_prediction(drone_data)
+			data_packet["Prediction"] = fire
+		send_packet()
 			
 except KeyboardInterrupt:
 	arduino_serial.close()

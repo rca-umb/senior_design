@@ -3,9 +3,14 @@
 
 from digi.xbee.devices import XBeeDevice, RemoteXBeeDevice, XBee64BitAddress
 import time
-import numpy as np
 import re
-import tensorflow as tf
+import geopy.distance # function for determining accurate gps distance
+
+# Maximum range for line-of-site communication bewteen two XBee units (m), needs to be measured experimentally
+XBEE_RANGE = 100 
+
+# Hub coordinates; there is no way to get this from software, must be determined ahead of time (maybe we could use the old GPS module?) 
+HUB_LOC = [0.0,0.0]
 
 # Instantiate a local XBee node (this is the XBee device connected to this Pi
 xbee = XBeeDevice("/dev/ttyUSB0", 115200)
@@ -15,72 +20,70 @@ this_xbee = xbee.get_64bit_addr().address.hex() # 64bit address object -> bytear
 # Keep record of each XBee's address
 registry = {"0013a200420107ce": "Drone 1", "0013a200420107ef": "Drone 2", "0013a20042010691": "Hub"}
 
-# Array to store values before ML processing
-drone_data = np.zeros(shape=[2,3],dtype=np.float32)
-
-# Load TensorFlow Lite model
-interpreter = tf.lite.Interpreter(model_path="/home/hub/Desktop/converted_model.tflite")
-interpreter.allocate_tensors()
-
-# Get input and output details
-input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
-
-# Function to make prediction based on model
-def make_prediction(data):
-	# Reshape data
-	data = np.reshape(data, (1, -1))
+# Class for keeping track of a drone's physical location and relativity in the network for efficient networking
+class DroneLocation:
+	def __init__(self, address):
+		self.addr = address
+		self.name = registry[address]
+		self.gps = [0.0,0.0]
+		self.level = 0
 	
-	# Set input tensor
-	interpreter.set_tensor(input_details[0]['index'], data)
+	def gps_update(self, x, y):
+		self.gps = [x, y]
+		self.set_level()
+			
+	def __set_level__(self):
+		dist = gps_dist(self.gps, HUB_LOC)
+		if dist < XBEE_RANGE:
+			self.level = 1
+		elif dist < (XBEE_RANGE * 2):
+			self.level = 2
+		else:
+			self.level = 0
+			# missing_drone() 
+				# TO DO: Add a function to try to find a missing drone
 
-	# Run inference
-	interpreter.invoke()
-
-	# Get the output tensor if needed
-	prediction = interpreter.get_tensor(output_details[0]['index'])
-	return prediction
-
-# Function to properly place data from drones into numpy array
-def update_array(device, variable, value):
-	row = 0
-	col = 0
-	if device == "Drone 1":
-		row = 0
-	elif device == "Drone 2":
-		row = 1
-	if variable == "Temperature":
-		col = 0
-	elif variable == "Humidity":
-		col = 1
-	elif variable == "Wind":
-		col = 2
-	else:
-		return
-	drone_data[row,col] = value
+# Gets the distance between to GPS coordinates
+def gps_dist(coords1, coords2):
+	return geopy.distance.geodesic(coords1, coords2).m
+	
+# The initial setup of the drone swarm
+def init_swarm(time):
+	config = True
+	d1 = None
+	d2 = None
+	while config:
+		try: 
+			xbee.read_data(time)
+			drone = xbee_message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
+			if registry[drone] == registry[0]:
+				d1 = DroneLocation(drone)
+				x = xbee_message.data.decode.split(',')[0]
+				y = xbee_message.data.decode.split(',')[1]
+				d1.gps_update(float(x),float(y))
+			elif registry[drone] == registry[1]:
+				d2 = DroneLocation(drone)
+				x = xbee_message.data.decode.split(',')[0]
+				y = xbee_message.data.decode.split(',')[1]
+				d2.gps_update(float(x),float(y))
+			else:
+				print("Data received from unidentified sender: " + drone)
+			print("Established connection to: " + registry[drone])
+			if (d1 != None) and (d2 != None): # configuration done
+				config = False
+		except:
+			print("Could not connect to a drone after 5 seconds.")
+	print("Successful established inital connections") # test up to here
 
 # Function to properly process data from drones
 def read_data(message):
 	that_xbee = xbee_message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
 	device = registry[that_xbee] # check which drone sent the data
 	print('From ' + device + ': ' + xbee_message.data.decode()) 
-	line = xbee_message.data.decode() # convert bytearray data to string
-	variable = line.split()[0] # first token in line will be the variable
-	variable = variable.translate({ord(i): None for i in ", ' ("}) 
-	value = line.split()[-1] # last token in line will be the numerical value
-	value = value.translate({ord(i): None for i in ", ' )"})
-	update_array(device, variable, value)	
 
 print(registry[this_xbee] + ': Now Running')
 t = 5 # wait this many seconds to receive data
-while True:
-	# Read incoming XBee data
-	try:
-		xbee_message = xbee.read_data(t)
-	except Exception as e:
-		print("Timeout after " + str(t) + " seconds. Trying again...")
-	read_data(xbee_message)
-	pred1 = make_prediction(drone_data[0])
-	print("Drone 1: " + str(pred1*100) + "% Chance of Fire")
-	pred2 = make_prediction(drone_data[1])
-	print("Drone 2: " + str(pred2*100) + "% Chance of Fire")
+init_swarm(t)
+
+
+	
