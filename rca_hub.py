@@ -89,9 +89,10 @@ init_swarm(t)
 while True:
 	try:
 		xbee_message = xbee.read_data(t)
+		read_data(xbee_message)
 	except:
 		print("Received no data after " + str(t) +" seconds.")
-	read_data(xbee_message)
+	
 
 
 	
