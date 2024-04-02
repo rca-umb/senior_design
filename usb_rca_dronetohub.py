@@ -5,7 +5,7 @@
 import serial
 import re
 import numpy as np
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 from digi.xbee.devices import XBeeDevice, RemoteXBeeDevice, XBee64BitAddress
 
 
@@ -25,7 +25,7 @@ data_packet = {"Target": "Hub", "GPS": [0.0,0.0], "Prediction": None}
 drone_data = np.array([1,3],np.float32)
 
 # Load TensorFlow Lite model
-interpreter = tf.lite.Interpreter(model_path="/home/hub/Desktop/converted_model.tflite")
+interpreter = tflite.Interpreter(model_path="/home/drone1/senior_design/converted_model.tflite")
 interpreter.allocate_tensors()
 
 # Get input and output details
