@@ -1,6 +1,5 @@
 # Team 1 UMB Senior Design '23-'24
 # Updated code to take data from Arduino and send to a different XBee device.
-# AFTER SYSTEM BOOT, UNPLUG ARDUINO AND XBEE. PLUG IN XBEE FIRST, THEN ARDUINO
 
 import serial
 import re
@@ -22,7 +21,7 @@ registry = {"0013a200420107ce": "Drone 1", "0013a200420107ef": "Drone 2", "0013a
 
 # Data to be sent to other XBees
 data_packet = {"Target": "Hub", "GPS": [0.0,0.0], "Prediction": None}
-drone_data = np.array([1,3],np.float32)
+drone_data = np.zeros((3,),np.float32)
 
 # Load TensorFlow Lite model
 interpreter = tflite.Interpreter(model_path="/home/drone1/senior_design/converted_model.tflite")
@@ -69,11 +68,12 @@ def make_prediction(data):
 
 # Function to send data to other XBees in the network
 def send_packet():
-	try:
-		xbee.send_data_broadcast(data_packet) # transmit just the gps coords
-		print("Target:" + data_packet["Target"] + ",GPS:" + data_packet["GPS"] +",Fire:" + data_packet["Prediction"]) # Print to pi terminal for testing
-	except:
-		print("Transmit Error")
+#	try:
+	x = data_packet["GPS"][0]
+	y = data_packet["GPS"][1]
+	xbee.send_data_broadcast(data_packet["Target"]) # transmit just the gps coords	print("Target:" + data_packet["Target"] + ",GPS:" + data_packet["GPS"] +",Fire:" + data_packet["Prediction"]) # Print to pi terminal for testing
+#	except Exception as e:
+#		print("Transmit Error due to: " + str(e))
 
 print(registry[this_xbee] + ': Now Running') # Shows in terminal which device is running					  
 try:
@@ -81,7 +81,8 @@ try:
 		data = read_arduino()
 		if data: # Only send packet when data from the Arduino has been read (ensures no repeats)
 			fire = make_prediction(drone_data)
-			data_packet["Prediction"] = fire
+			data_packet["Prediction"] = fire[0][0]
+		print(data_packet)
 		send_packet()
 			
 except KeyboardInterrupt:
