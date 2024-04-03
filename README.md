@@ -22,12 +22,10 @@ How do we even want this network to function? Possibility: Change script on dron
 	2) ~~get sensors working~~
 	3) ~~check that hub gets data from both (might need to be done at home)~~
 8) ~~Do one of the following: (this actually might not matter cause of how I did the array setup)~~
-	1) ensure all of the data is sending/receiving in order
-	2) change strings to byte arrays
 9) ~~Change script on hub to pass data into model. Get rid of GUI and webserver. Get rid of need for CSV files.~~
-10) Move fire prediction onto drones. Yes/No will be only thing sent back to hub. Hub will be responsible for maintaining mesh network
-	1) Drones send output
-	2) Hub receives output
+10) ~~Move fire prediction onto drones. Yes/No will be only thing sent back to hub. Hub will be responsible for maintaining mesh network~~
+	1) ~~Drones send output~~
+	2) ~~Hub receives output~~
 11) Hub code can correctly connect to XBees when in range
 12) Hub code can correctly connect to XBees when out of range
 13) Check in with Professor Materdey on how mesh network is even supposed to behave and adjust this plan accordingly
@@ -40,9 +38,16 @@ How do we even want this network to function? Possibility: Change script on dron
 20) Redownload all necessary libraries onto Drone 1
 21) Get everything working on Drone 2 to work on Drone 1
 22) Add to hub script a way to reconfigure drone order based on results of ML model
-23) Solve the USB Order problem described in Notes above
+23) ~~Solve the USB Order problem described in Notes above~~
+24) add functionality for drones to recieve messages
+25) add functionality for drones to pass on other drone's messages
+26) add checks for data packets
+	1) if sender of packet == the current drone, discard
+	2) add list to packet to keep track of nodes its visited, if the current drone is in the list, discard
+	3) if target == current drone, read packet
+	4) else pass on the packet
 #### Hardware
 1) ~~Update PCB design~~
-2) Order PCB
+2) ~~Order PCB~~
 3) Assemble PCB
 4) Manually test line-of-site range for a pair of XBees, or find a reliable figure online
