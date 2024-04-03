@@ -71,10 +71,10 @@ def init_swarm(time):
 			else:
 				print("Data received from unidentified sender: " + drone)
 			print("Established connection to: " + registry[drone])
-			if (d1 != None) and (d2 != None): # configuration done
+			if (d1 != None) or (d2 != None): # configuration done
 				config = False
-		except:
-			print("Could not connect to a drone after 5 seconds.")
+		except Exception as e:
+			print("Could not connect to a drone after 5 seconds: " + str(e))
 	print("Successful established inital connections") # test up to here
 
 # Function to properly process data from drones
@@ -87,11 +87,11 @@ print(registry[this_xbee] + ': Now Running')
 t = 5 # wait this many seconds to receive data
 init_swarm(t)
 while True:
-	try:
-		xbee_message = xbee.read_data(t)
-		read_data(xbee_message)
-	except:
-		print("Received no data after " + str(t) +" seconds.")
+#	try:
+	xbee_message = xbee.read_data(t)
+	read_data(xbee_message)
+#	except:
+#		print("Received no data after " + str(t) +" seconds.")
 	
 
 
