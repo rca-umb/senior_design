@@ -30,7 +30,7 @@ class DroneLocation:
 	
 	def gps_update(self, x, y):
 		self.gps = [x, y]
-		self.set_level()
+		self.__set_level__()
 			
 	def __set_level__(self):
 		dist = gps_dist(self.gps, HUB_LOC)
@@ -58,17 +58,18 @@ def init_swarm(time):
 			drone = xbee_message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
 		except Exception as e:
 			print("Could not connect to a drone after 5 seconds: " + str(e))
-		if registry[drone] == registry[0]:
+		if registry[drone] == "Drone 1":
 			d1 = DroneLocation(drone)
-			coords = re.findall(r"[-+]?\d*\.\d+|\d+", xbee_message.data.decode())
-			x = coords[0]
-			y = coords[1]
+			packet = xbee_message.data.decode()
+			x = packet.split(":")[1]
+			y = packet.split(":")[2]
 			d1.gps_update(float(x),float(y))
-		elif registry[drone] == registry[1]:
+		elif registry[drone] == "Drone 2":
 			d2 = DroneLocation(drone)
-			coords = re.findall(r"[-+]?\d*\.\d+|\d+", xbee_message.data.decode())
-			x = coords[0]
-			y = coords[1]
+			packet = xbee_message.data.decode()
+			print(packet)
+			x = packet.split(":")[1]
+			y = packet.split(":")[2]
 			d2.gps_update(float(x),float(y))
 		else:
 			print("Data received from unidentified sender: " + drone)
@@ -84,14 +85,14 @@ def read_data(message):
 	print('From ' + device + ': ' + message.data.decode()) 
 
 print(registry[this_xbee] + ': Now Running')
-t = 5 # wait this many seconds to receive data
+t = 25 # wait this many seconds to receive data
 init_swarm(t)
 while True:
-#	try:
-	xbee_message = xbee.read_data(t)
-	read_data(xbee_message)
-#	except:
-#		print("Received no data after " + str(t) +" seconds.")
+	try:
+		xbee_message = xbee.read_data(t)
+		read_data(xbee_message)
+	except:
+		print("Received no data after " + str(t) +" seconds.")
 	
 
 
