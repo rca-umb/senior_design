@@ -56,25 +56,25 @@ def init_swarm(time):
 		try: 
 			xbee_message = xbee.read_data(time)
 			drone = xbee_message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
-			if registry[drone] == registry[0]:
-				d1 = DroneLocation(drone)
-				coords = re.findall(r"[-+]?\d*\.\d+|\d+", xbee_message.data.decode())
-				x = coords[0]
-				y = coords[1]
-				d1.gps_update(float(x),float(y))
-			elif registry[drone] == registry[1]:
-				d2 = DroneLocation(drone)
-				coords = re.findall(r"[-+]?\d*\.\d+|\d+", xbee_message.data.decode())
-				x = coords[0]
-				y = coords[1]
-				d2.gps_update(float(x),float(y))
-			else:
-				print("Data received from unidentified sender: " + drone)
-			print("Established connection to: " + registry[drone])
-			if (d1 != None) or (d2 != None): # configuration done
-				config = False
 		except Exception as e:
 			print("Could not connect to a drone after 5 seconds: " + str(e))
+		if registry[drone] == registry[0]:
+			d1 = DroneLocation(drone)
+			coords = re.findall(r"[-+]?\d*\.\d+|\d+", xbee_message.data.decode())
+			x = coords[0]
+			y = coords[1]
+			d1.gps_update(float(x),float(y))
+		elif registry[drone] == registry[1]:
+			d2 = DroneLocation(drone)
+			coords = re.findall(r"[-+]?\d*\.\d+|\d+", xbee_message.data.decode())
+			x = coords[0]
+			y = coords[1]
+			d2.gps_update(float(x),float(y))
+		else:
+			print("Data received from unidentified sender: " + drone)
+		print("Established connection to: " + registry[drone])
+		if (d1 != None) or (d2 != None): # configuration done
+			config = False
 	print("Successful established inital connections") # test up to here
 
 # Function to properly process data from drones
