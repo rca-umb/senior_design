@@ -68,12 +68,12 @@ def make_prediction(data):
 
 # Function to send data to other XBees in the network
 def send_packet():
-#	try:
-	x = data_packet["GPS"][0]
-	y = data_packet["GPS"][1]
-	xbee.send_data_broadcast(data_packet["Target"]) # transmit just the gps coords	print("Target:" + data_packet["Target"] + ",GPS:" + data_packet["GPS"] +",Fire:" + data_packet["Prediction"]) # Print to pi terminal for testing
-#	except Exception as e:
-#		print("Transmit Error due to: " + str(e))
+	try:
+		x = data_packet["GPS"][0]
+		y = data_packet["GPS"][1]
+		xbee.send_data_broadcast(data_packet["Target"] + ":" + str(x) + ":" +str(y) + ":" + str(data_packet["Prediction"]))
+	except Exception as e:
+		print("Transmit Error due to: " + str(e))
 
 print(registry[this_xbee] + ': Now Running') # Shows in terminal which device is running					  
 try:
