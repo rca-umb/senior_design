@@ -33,7 +33,7 @@ How do we even want this network to function? Possibility: Change script on dron
 15) Create script to get GPS coordinates
 16) Integrate with current script
 17) Get script to run on startup
-18) Back up files from Drone 1
+18) ~~Back up files from Drone 1~~
 19) Download Raspbian onto 32 GB microSD. Use this as a replacement for microSD currently in Drone 1
 20) Redownload all necessary libraries onto Drone 1
 21) Get everything working on Drone 2 to work on Drone 1
