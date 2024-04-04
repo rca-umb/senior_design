@@ -26,8 +26,8 @@ How do we even want this network to function? Possibility: Change script on dron
 10) ~~Move fire prediction onto drones. Yes/No will be only thing sent back to hub. Hub will be responsible for maintaining mesh network~~
 	1) ~~Drones send output~~
 	2) ~~Hub receives output~~
-11) Hub code can correctly connect to XBees when in range
-12) Hub code can correctly connect to XBees when out of range
+11) ~~Hub code can correctly connect to XBees when in range~~
+12) ~~Hub code can correctly connect to XBees when out of range~~
 13) Check in with Professor Materdey on how mesh network is even supposed to behave and adjust this plan accordingly
 14) Install Mission Planner on Drone 2
 15) Create script to get GPS coordinates
@@ -35,8 +35,8 @@ How do we even want this network to function? Possibility: Change script on dron
 17) Get script to run on startup
 18) ~~Back up files from Drone 1~~
 19) Download Raspbian onto 32 GB microSD. Use this as a replacement for microSD currently in Drone 1
-20) Redownload all necessary libraries onto Drone 1
-21) Get everything working on Drone 2 to work on Drone 1
+20) ~~Redownload all necessary libraries onto Drone 1~~
+21) ~~Get everything working on Drone 2 to work on Drone 1~~
 22) Add to hub script a way to reconfigure drone order based on results of ML model
 23) ~~Solve the USB Order problem described in Notes above~~
 24) add functionality for drones to recieve messages
