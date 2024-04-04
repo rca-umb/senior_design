@@ -88,7 +88,7 @@ def handle_packet():
 		elif message in seen:
 			return
 		packet =  message.data.decode()
-		target = packet.split(":")[1]
+		target = packet.split(":")[0]
 		if target == registry[this_xbee]:
 			print('From ' + device + ': ' + message.data.decode()) 
 		else:
