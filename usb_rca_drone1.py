@@ -94,6 +94,7 @@ def handle_packet():
 		else:
 			try:
 				xbee.send_data_broadcast(packet)
+				seen.append[message]
 			except Exception as e:
 				print("Transmit Error due to: " + str(e))
 	except Exception as e:
