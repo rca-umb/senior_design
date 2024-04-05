@@ -81,7 +81,7 @@ def send_packet():
 # Function to read incoming data
 def handle_packet():
 	try:
-		message = xbee.read_data(t)
+		message = xbee.read_data(25)
 		other_xbee = message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
 		if registry[other_xbee] == registry[this_xbee]: 
 			return
