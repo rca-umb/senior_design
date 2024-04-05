@@ -43,6 +43,10 @@ class DroneLocation:
 			# missing_drone() 
 				# TO DO: Add a function to try to find a missing drone
 
+# Initialize drone location objects
+d1 = None
+d2 = None
+
 # Gets the distance between to GPS coordinates
 def gps_dist(coords1, coords2):
 	return geopy.distance.geodesic(coords1, coords2).m
@@ -50,8 +54,6 @@ def gps_dist(coords1, coords2):
 # The initial setup of the drone swarm
 def init_swarm(time):
 	config = True
-	d1 = None
-	d2 = None
 	while config:
 		try: 
 			xbee_message = xbee.read_data(time)
@@ -66,6 +68,7 @@ def init_swarm(time):
 
 # Function to update DroneLocation object with new coordinates
 def update_location(message, device):
+	global d1, d2
 	if registry[device] == "Drone 1":
 		d1 = DroneLocation(device)
 		packet = message.data.decode()
@@ -75,7 +78,6 @@ def update_location(message, device):
 	elif registry[device] == "Drone 2":
 		d2 = DroneLocation(device)
 		packet = message.data.decode()
-		print(packet)
 		x = packet.split(":")[1]
 		y = packet.split(":")[2]
 		d2.gps_update(float(x),float(y))
@@ -86,7 +88,7 @@ def update_location(message, device):
 def read_data(message):
 	drone = message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
 	update_location(message, drone)
-	fire = 100.0*float(message.data.decode.split(":")[3])
+	fire = 100.0*float((message.data.decode()).split(":")[3])
 	if (fire > 75):
 		for addr in registry:
 			if addr == drone:
@@ -94,21 +96,22 @@ def read_data(message):
 			elif registry[addr] == "Hub":
 				continue
 			else:
-				packet = registry[addr] + ":" + str(fire) + "%chance of fire at " + registry[drone]
-				xbee.send_data_broadcast(packet) 
+				packet = registry[addr] + ":" + str(fire) + "% chance of fire at " + registry[drone]
+				xbee.send_data_broadcast(packet)
+				print(packet) 
 	else:
 		print('From ' + registry[drone] + ': ' + message.data.decode()) 
 
 print(registry[this_xbee] + ': Now Running')
-t = 25 # wait this many seconds to receive data
+t = 60 # wait this many seconds to receive data
 init_swarm(t)
 while True:
 	try:
 		xbee_message = xbee.read_data(t)
 		read_data(xbee_message)
-	except:
+	except Exception as e:
 		print("Received no data after " + str(t) +" seconds.")
-	
+		print(e)
 
 
 	
