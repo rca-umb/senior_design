@@ -58,31 +58,46 @@ def init_swarm(time):
 			drone = xbee_message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
 		except Exception as e:
 			print("Could not connect to a drone after 5 seconds: " + str(e))
-		if registry[drone] == "Drone 1":
-			d1 = DroneLocation(drone)
-			packet = xbee_message.data.decode()
-			x = packet.split(":")[1]
-			y = packet.split(":")[2]
-			d1.gps_update(float(x),float(y))
-		elif registry[drone] == "Drone 2":
-			d2 = DroneLocation(drone)
-			packet = xbee_message.data.decode()
-			print(packet)
-			x = packet.split(":")[1]
-			y = packet.split(":")[2]
-			d2.gps_update(float(x),float(y))
-		else:
-			print("Data received from unidentified sender: " + drone)
+		update_location(xbee_message, drone)
 		print("Established connection to: " + registry[drone])
-		if (d1 != None) or (d2 != None): # configuration done
+		if (d1 != None) and (d2 != None): # configuration done
 			config = False
 	print("Successful established inital connections") # test up to here
 
+# Function to update DroneLocation object with new coordinates
+def update_location(message, device):
+	if registry[device] == "Drone 1":
+		d1 = DroneLocation(device)
+		packet = message.data.decode()
+		x = packet.split(":")[1]
+		y = packet.split(":")[2]
+		d1.gps_update(float(x),float(y))
+	elif registry[device] == "Drone 2":
+		d2 = DroneLocation(device)
+		packet = message.data.decode()
+		print(packet)
+		x = packet.split(":")[1]
+		y = packet.split(":")[2]
+		d2.gps_update(float(x),float(y))
+	else:
+		print("Data received from unidentified sender: " + device)
+
 # Function to properly process data from drones
 def read_data(message):
-	that_xbee = message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
-	device = registry[that_xbee] # check which drone sent the data
-	print('From ' + device + ': ' + message.data.decode()) 
+	drone = message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
+	update_location(message, drone)
+	fire = 100.0*float(message.data.decode.split(":")[3])
+	if (fire > 75):
+		for addr in registry:
+			if addr == drone:
+				continue
+			elif registry[addr] == "Hub":
+				continue
+			else:
+				packet = registry[addr] + ":" + str(fire) + "%chance of fire at " + registry[drone]
+				xbee.send_data_broadcast(packet) 
+	else:
+		print('From ' + registry[drone] + ': ' + message.data.decode()) 
 
 print(registry[this_xbee] + ': Now Running')
 t = 25 # wait this many seconds to receive data
