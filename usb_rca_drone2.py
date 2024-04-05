@@ -23,6 +23,9 @@ registry = {"0013a200420107ce": "Drone 1", "0013a200420107ef": "Drone 2", "0013a
 data_packet = {"Target": "Hub", "GPS": [0.0,0.0], "Prediction": None}
 drone_data = np.zeros((3,),np.float32)
 
+# Array of seen messages
+seen = []
+
 # Load TensorFlow Lite model
 interpreter = tflite.Interpreter(model_path="/home/drone1/senior_design/converted_model.tflite")
 interpreter.allocate_tensors()
@@ -75,6 +78,28 @@ def send_packet():
 	except Exception as e:
 		print("Transmit Error due to: " + str(e))
 
+# Function to read incoming data
+def handle_packet():
+	try:
+		message = xbee.read_data(t)
+		other_xbee = message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
+		if registry[other_xbee] == registry[this_xbee]: 
+			return
+		elif message in seen:
+			return
+		packet =  message.data.decode()
+		target = packet.split(":")[0]
+		if target == registry[this_xbee]:
+			print('From ' + device + ': ' + message.data.decode()) 
+		else:
+			try:
+				xbee.send_data_broadcast(packet)
+				seen.append[message]
+			except Exception as e:
+				print("Transmit Error due to: " + str(e))
+	except Exception as e:
+		print("Trouble reading data due to: " + str(e))
+
 print(registry[this_xbee] + ': Now Running') # Shows in terminal which device is running					  
 try:
 	while True:
@@ -84,6 +109,7 @@ try:
 			data_packet["Prediction"] = fire[0][0]
 		print(data_packet)
 		send_packet()
+		handle_packet()
 			
 except KeyboardInterrupt:
 	arduino_serial.close()
