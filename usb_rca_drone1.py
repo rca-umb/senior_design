@@ -6,6 +6,7 @@ import re
 import numpy as np
 import tflite_runtime.interpreter as tflite
 from digi.xbee.devices import XBeeDevice, RemoteXBeeDevice, XBee64BitAddress
+import flight_control
 
 
 # Connect to Arduino through Serial communication
@@ -72,9 +73,9 @@ def make_prediction(data):
 # Function to send data to other XBees in the network
 def send_packet():
 	try:
-		x = data_packet["GPS"][0]
-		y = data_packet["GPS"][1]
-		xbee.send_data_broadcast(data_packet["Target"] + ":" + str(x) + ":" +str(y) + ":" + str(data_packet["Prediction"]))
+		lat = get_lat()
+		lon = get_lon()
+		xbee.send_data_broadcast(data_packet["Target"] + ":" + str(lat) + ":" +str(lon) + ":" + str(data_packet["Prediction"]))
 	except Exception as e:
 		print("Transmit Error due to: " + str(e))
 

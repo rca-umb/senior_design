@@ -39,8 +39,8 @@ How do we even want this network to function? Possibility: Change script on dron
 	2) ~~add list to packet to keep track of nodes its visited, if the current drone is in the list, discard~~
 	3) ~~if target == current drone, read packet~~
 	4) ~~else pass on the packet~~
-20) Install Mission Planner on Drone 2
-21) Create script to get GPS coordinates
+20) ~~Install Mission Planner on Drone 2~~
+21) ~~Create script to get GPS coordinates~~
 22) Integrate with current script
 23) Get script to run on startup
 24) Download Raspbian onto 32 GB microSD. Use this as a replacement for microSD currently in Drone 1
