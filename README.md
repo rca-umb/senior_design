@@ -4,7 +4,7 @@ This repository aims to document and hold the code required for Team 1 of UMass 
 #### USB Order
 When running the drone script for the first time, the Arduino might need to be unplugged and plugged back in. The script works assuming that the XBee is connected before the Arduino. This matters because of the way the USB numbers are assigned by the Pi OS. It would be nice if there was a workaround where this wouldn't matter. Actually a possible solution would be to check for the specific error, and if it thrown, try again with the USB directories switched.
 #### Drone Data Broadcasting
-Drones are currently competing to get there data read. The transmission is not happening with any sort of efficiency. There are several ways we can try to address this, but this is not a huge priority at the moment. I think a flawed system which is complete is better than an optimized system which is missing parts.
+Drones are currently competing to get their data read. The transmission is not happening with any sort of efficiency. There are several ways we can try to address this, but this is not a huge priority at the moment. I think a flawed system which is complete is better than an optimized system which is missing parts.
 #### Mesh Network Behavioral Clarification
 How do we even want this network to function? Possibility: Change script on drone so that XBee mode is configured to send data to a single other drone. Write this script so that the target drone can be changed. I don't think that's a mesh network though. Should probably have them all sending and receiving, but that just begs the question: what is the hub for?
 
