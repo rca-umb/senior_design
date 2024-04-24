@@ -22,22 +22,33 @@ How do we even want this network to function? Possibility: Change script on dron
 	2) ~~get sensors working~~
 	3) ~~check that hub gets data from both (might need to be done at home)~~
 8) ~~Do one of the following: (this actually might not matter cause of how I did the array setup)~~
-	1) ensure all of the data is sending/receiving in order
-	2) change strings to byte arrays
 9) ~~Change script on hub to pass data into model. Get rid of GUI and webserver. Get rid of need for CSV files.~~
-10) Check in with Professor Materdey on how mesh network is even supposed to behave and adjust this plan accordingly
-11) Install Mission Planner on Drone 2
-12) Create script to get GPS coordinates
-13) Integrate with current script
-14) Get script to run on startup
-15) Back up files from Drone 1
-16) Download Raspbian onto 32 GB microSD. Use this as a replacement for microSD currently in Drone 1
-17) Redownload all necessary libraries onto Drone 1
-18) Get everything working on Drone 2 to work on Drone 1
-21) Add to hub script a way to reconfigure drone order based on results of ML model
-22) Move fire prediction onto drones. Yes/No will be only thing sent back to hub. Hub will be responsible for maintaining mesh network
-23) Solve the USB Order problem described in Notes above
+10) ~~Move fire prediction onto drones. Yes/No will be only thing sent back to hub. Hub will be responsible for maintaining mesh network~~
+	1) ~~Drones send output~~
+	2) ~~Hub receives output~~
+11) ~~Hub code can correctly connect to XBees when in range~~
+12) ~~Hub code can correctly connect to XBees when out of range~~
+13) ~~Back up files from Drone 1~~
+14) ~~Redownload all necessary libraries onto Drone 1~~
+15) ~~Get everything working on Drone 2 to work on Drone 1~~
+16) ~~Solve the USB Order problem described in Notes above~~
+17) ~~add functionality for drones to recieve messages~~
+18) ~~add functionality for drones to pass on other drone's messages~~
+19) ~~add checks for data packets~~
+	1) ~~if sender of packet == the current drone, discard~~
+	2) ~~add list to packet to keep track of nodes its visited, if the current drone is in the list, discard~~
+	3) ~~if target == current drone, read packet~~
+	4) ~~else pass on the packet~~
+20) ~~Install Mission Planner on Drone 2~~
+21) ~~Create script to get GPS coordinates~~
+22) Integrate with current script
+23) Get script to run on startup
+24) Download Raspbian onto 32 GB microSD. Use this as a replacement for microSD currently in Drone 1
+25) Add to hub script a way to reconfigure drone order based on results of ML model
+26) Change drone networking to do one at a time
 #### Hardware
 1) ~~Update PCB design~~
-2) Order PCB
+2) ~~Order PCB~~
 3) Assemble PCB
+4) Manually test line-of-site range for a pair of XBees, or find a reliable figure online
+5) Calibrate second drone
