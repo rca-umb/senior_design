@@ -41,7 +41,7 @@ How do we even want this network to function? Possibility: Change script on dron
 	4) ~~else pass on the packet~~
 20) ~~Install Mission Planner on Drone 2~~
 21) ~~Create script to get GPS coordinates~~
-22) Integrate with current script
+22) ~~Integrate with current script~~
 23) Get script to run on startup
 24) Download Raspbian onto 32 GB microSD. Use this as a replacement for microSD currently in Drone 1
 25) Add to hub script a way to reconfigure drone order based on results of ML model
@@ -49,6 +49,6 @@ How do we even want this network to function? Possibility: Change script on dron
 #### Hardware
 1) ~~Update PCB design~~
 2) ~~Order PCB~~
-3) Assemble PCB
+3) ~~Assemble PCB~~
 4) Manually test line-of-site range for a pair of XBees, or find a reliable figure online
-5) Calibrate second drone
+5) ~~Calibrate second drone~~
