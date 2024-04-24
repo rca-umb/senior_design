@@ -46,6 +46,9 @@ How do we even want this network to function? Possibility: Change script on dron
 24) Download Raspbian onto 32 GB microSD. Use this as a replacement for microSD currently in Drone 1
 25) Add to hub script a way to reconfigure drone order based on results of ML model
 26) Change drone networking to do one at a time
+27) Change drone script to get sensor data only once lead drone has reached its destination
+28) Change hub code to take user input for gps location
+29) Add flight instructions to hub script
 #### Hardware
 1) ~~Update PCB design~~
 2) ~~Order PCB~~
