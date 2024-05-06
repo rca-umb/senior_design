@@ -10,7 +10,7 @@ import geopy.distance # function for determining accurate gps distance
 XBEE_RANGE = 100 
 
 # Hub coordinates; there is no way to get this from software, must be determined ahead of time (maybe we could use the old GPS module?) 
-target = [0.0,0.0]
+HUB_LOC = [0.0,0.0]
 
 # Instantiate a local XBee node (this is the XBee device connected to this Pi
 xbee = XBeeDevice("/dev/ttyUSB0", 115200)
@@ -20,25 +20,28 @@ this_xbee = xbee.get_64bit_addr().address.hex() # 64bit address object -> bytear
 # Keep record of each XBee's address
 registry = {"0013a200420107ce": "Drone 1", "0013a200420107ef": "Drone 2", "0013a20042010691": "Hub"}
 
-# Drone location objects
-d1 = None
-d2 = None
-
 # Class for keeping track of a drone's physical location and relativity in the network for efficient networking
 class DroneLocation:
 	def __init__(self, address):
 		self.addr = address
 		self.name = registry[address]
 		self.gps = [0.0,0.0]
-		self.distance2go = 0
+		self.level = 0
 	
 	def gps_update(self, x, y):
 		self.gps = [x, y]
-		self.target_update()
+		self.set_level()
 			
-	def target_update(self):
-		dist = gps_dist(self.gps, target)
-		self.distance2go = dist
+	def __set_level__(self):
+		dist = gps_dist(self.gps, HUB_LOC)
+		if dist < XBEE_RANGE:
+			self.level = 1
+		elif dist < (XBEE_RANGE * 2):
+			self.level = 2
+		else:
+			self.level = 0
+			# missing_drone() 
+				# TO DO: Add a function to try to find a missing drone
 
 # Gets the distance between to GPS coordinates
 def gps_dist(coords1, coords2):
@@ -46,8 +49,9 @@ def gps_dist(coords1, coords2):
 	
 # The initial setup of the drone swarm
 def init_swarm(time):
-	global d1, d2
 	config = True
+	d1 = None
+	d2 = None
 	while config:
 		try: 
 			xbee_message = xbee.read_data(time)
@@ -79,31 +83,11 @@ def read_data(message):
 	device = registry[that_xbee] # check which drone sent the data
 	print('From ' + device + ': ' + message.data.decode()) 
 
-# Function to start a new mission
-def new_mission():
-	global target
-	try:
-		waypoint = input("Enter the coordinates of the location to monitor in the form latitude longitude: ")
-		target[0] = waypoint.split(" ")[0]
-		target[1] = waypoint.split(" ")[1]
-	except:
-		print("Invalid input. Please enter the coordinates in the form latitude longitude.")
-		return
-	if (d1.distance2go <= d2.distance2go):
-		swarm_takeoff(1)
-	else:
-		swarm_takeoff(2)
-
-# Function to send instructions to drones
-def swarm_takeoff(order):
-
-
 print(registry[this_xbee] + ': Now Running')
 t = 5 # wait this many seconds to receive data
 init_swarm(t)
 while True:
 	try:
-		new_mission()
 		xbee_message = xbee.read_data(t)
 	except:
 		print("Received no data after " + str(t) +" seconds.")
