@@ -27,7 +27,7 @@ drone_data = np.zeros((3,),np.float32)
 seen = []
 
 # Load TensorFlow Lite model
-interpreter = tflite.Interpreter(model_path="/home/drone1/senior_design/converted_model.tflite")
+interpreter = tflite.Interpreter(model_path="/home/droneone/senior_design/converted_model.tflite")
 interpreter.allocate_tensors()
 
 # Get input and output details
@@ -72,16 +72,16 @@ def make_prediction(data):
 # Function to send data to other XBees in the network
 def send_packet():
 	try:
-		x = data_packet["GPS"][0]
-		y = data_packet["GPS"][1]
-		xbee.send_data_broadcast(data_packet["Target"] + ":" + str(x) + ":" +str(y) + ":" + str(data_packet["Prediction"]))
+		lat = get_lat()
+		lon = get_lon()
+		xbee.send_data_broadcast(data_packet["Target"] + ":" + str(lat) + ":" +str(lon) + ":" + str(data_packet["Prediction"]))
 	except Exception as e:
 		print("Transmit Error due to: " + str(e))
 
 # Function to read incoming data
 def handle_packet():
 	try:
-		message = xbee.read_data(25)
+		message = xbee.read_data(60)
 		other_xbee = message.remote_device.get_64bit_addr().address.hex() # string representation of byteaddress representation of 64bit address
 		if registry[other_xbee] == registry[this_xbee]: 
 			return
@@ -90,11 +90,11 @@ def handle_packet():
 		packet =  message.data.decode()
 		target = packet.split(":")[0]
 		if target == registry[this_xbee]:
-			print('From ' + device + ': ' + message.data.decode()) 
+			print('From ' + other_xbee + ': ' + message.data.decode()) 
 		else:
 			try:
 				xbee.send_data_broadcast(packet)
-				seen.append[message]
+				seen.append(message)
 			except Exception as e:
 				print("Transmit Error due to: " + str(e))
 	except Exception as e:
@@ -114,5 +114,4 @@ try:
 except KeyboardInterrupt:
 	arduino_serial.close()
 
-        
         
