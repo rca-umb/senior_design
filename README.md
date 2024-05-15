@@ -1,12 +1,18 @@
 This repository aims to document and hold the code required for Team 1 of UMass Boston's 23'-24' Senior Design class: Robert, Yousuf, Brandon.
 
-### Notes:
-#### USB Order
-When running the drone script for the first time, the Arduino might need to be unplugged and plugged back in. The script works assuming that the XBee is connected before the Arduino. This matters because of the way the USB numbers are assigned by the Pi OS. It would be nice if there was a workaround where this wouldn't matter. Actually a possible solution would be to check for the specific error, and if it thrown, try again with the USB directories switched.
-#### Drone Data Broadcasting
-Drones are currently competing to get their data read. The transmission is not happening with any sort of efficiency. There are several ways we can try to address this, but this is not a huge priority at the moment. I think a flawed system which is complete is better than an optimized system which is missing parts.
-#### Mesh Network Behavioral Clarification
-How do we even want this network to function? Possibility: Change script on drone so that XBee mode is configured to send data to a single other drone. Write this script so that the target drone can be changed. I don't think that's a mesh network though. Should probably have them all sending and receiving, but that just begs the question: what is the hub for?
+### Operation Manual
+There are three main components to the system: the central hub and two drones. Connecting to the system is currently a week point of our project, as the correct scripts do not run automatically. A great next step could be to have the scripts run at startup. For now, each of the three Raspberry Pis (hub, drone 1, drone 2) need to be connected to a Wi-Fi network so that they can be controlled via SSH. To initialize the Wi-Fi connection for the first time, you will need an external monitor, keyboard, and mouse. 
+For each Pi, once you have it connected to Wi-Fi, open up the terminal and type “"ifconfig". This command will show the IP address of the Pi which is needed for SSH. Record each of these addresses for later. Once all three are connected, on a separate computer, connect to each of the Pis through SSH using the IP addresses (you can have all three SSH sessions running at once). There are several different apps you can use for this, but if you do not have any experience with SSH, then we would recommend PuTTY since it is free and has always worked for us. Once connected to the Pi, you will need to sign in. The credentials for each of the Pis are shown in Table 2.
+
+Device	Username	Password
+Central Hub	hub	hub
+Drone 1	droneone	droneone
+Drone 2	drone1	drone1
+Table 2 – Raspberry Pi credentials
+
+Once you are logged into a Pi, you will need to locate the “senior_design” directory. This should be either in the “Desktop” directory or in the user directory. Once in this directory, it may be wise to get the latest version of the code by fetching any updates from the repository on Github. To do this, type “git pull”. If there are any new updates to the code, this should be automatically download them. 
+Now, the script which you will run will depend on the device you are on. For drone 1, which is the drone with the custom PCB on the Pi, you will have to run
+
 
 ### To Do:
 
@@ -47,11 +53,11 @@ How do we even want this network to function? Possibility: Change script on dron
 25) Add to hub script a way to reconfigure drone order based on results of ML model
 26) Change drone networking to do one at a time
 27) Change drone script to get sensor data only once lead drone has reached its destination
-28) Change hub code to take user input for gps location
+28) ~~Change hub code to take user input for gps location~~
 29) Add flight instructions to hub script
 #### Hardware
 1) ~~Update PCB design~~
 2) ~~Order PCB~~
 3) ~~Assemble PCB~~
-4) Manually test line-of-site range for a pair of XBees, or find a reliable figure online
+4) ~~Manually test line-of-site range for a pair of XBees, or find a reliable figure online~~
 5) ~~Calibrate second drone~~
