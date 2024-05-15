@@ -10,7 +10,7 @@ import flight_control
 
 
 # Connect to Arduino through Serial communication
-arduino_serial = serial.Serial(port="/dev/ttyUSB1", baudrate=57600, timeout=1)
+arduino_serial = serial.Serial(port="/dev/ttyS0", baudrate=57600, timeout=1)
 
 # Instantiate a local XBee node (this is the XBee device connected to this Pi)
 xbee = XBeeDevice("/dev/ttyUSB0", 115200)
